@@ -10,98 +10,67 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.PermissionRequest;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.kyanogen.signatureview.SignatureView;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    SignatureView signatureView;
+    ImageButton imgEraser, imgColor, imgSave;
+    SeekBar seekBar;
+    TextView txtPenSize;
 
-    private ImageView imageView;
-
-    private float floatStartX = -1, floatStartY = -1,
-            floatEndX = -1, floatEndY = -1;
-
-    private Bitmap bitmap;
-    private Canvas canvas;
-    private Paint paint = new Paint();
+    private static String fileName;
+    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/myPaintings");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActivityCompat.requestPermissions(this
-                ,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                PackageManager.PERMISSION_GRANTED);
+        signatureView = findViewById(R.id.signature_view);
+        seekBar = findViewById(R.id.penSize);
+        txtPenSize = findViewById(R.id.txtPenSize);
+        imgColor = findViewById(R.id.btnColor);
+        imgEraser = findViewById(R.id.btnEraser);
+        imgSave = findViewById(R.id.btnSave);
 
-        imageView = findViewById(R.id.imageView4);
+        //askPermission();
+
+        
     }
 
-    private void drawPaintSketchImage(){
+/*
+    private void askPermission(){
+        Dexter.withContext(this).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport){
+                Toast.makeText(MainActivity.this, "Granted!", Toast.LENGTH_SHORT).show();
+            }
 
-        if (bitmap == null){
-            bitmap = Bitmap.createBitmap(imageView.getWidth(),
-                    imageView.getHeight(),
-                    Bitmap.Config.ARGB_8888);
-            canvas = new Canvas(bitmap);
-            paint.setColor(Color.RED);
-            paint.setAntiAlias(true);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(8);
-        }
-        canvas.drawLine(floatStartX,
-                floatStartY,
-                floatEndX,
-                floatEndY,
-                paint);
-        imageView.setImageBitmap(bitmap);
-    }
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken){
+                permissionToken.continuePermissionRequest();
+            }
+        }).check();
+    }*/
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN){
-            floatStartX = event.getX();
-            floatStartY = event.getY();
-        }
-
-        if (event.getAction() == MotionEvent.ACTION_MOVE){
-            floatEndX = event.getX();
-            floatEndY = event.getY();
-            drawPaintSketchImage();
-            floatStartX = event.getX();
-            floatStartY = event.getY();
-        }
-        if (event.getAction() == MotionEvent.ACTION_UP){
-            floatEndX = event.getX();
-            floatEndY = event.getY();
-            drawPaintSketchImage();
-        }
-        return super.onTouchEvent(event);
-    }
-
-    public void buttonSaveImage(View view){
-        /*File fileSaveImage = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                Calendar.getInstance().getTime().toString() + ".jpg");
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(fileSaveImage);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-            fileOutputStream.flush();
-            fileOutputStream.close();
-            Toast.makeText(this,
-                    "File Saved Successfully",
-                    Toast.LENGTH_LONG).show();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-        canvas = null;
-    }
 }
