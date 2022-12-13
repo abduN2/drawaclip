@@ -15,10 +15,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -31,7 +33,10 @@ import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.List;
 
+import yuku.ambilwarna.AmbilWarnaDialog;
+
 public class MainActivity extends AppCompatActivity {
+    int defaultColor;
     SignatureView signatureView;
     ImageButton imgEraser, imgColor, imgSave;
     SeekBar seekBar;
@@ -54,7 +59,31 @@ public class MainActivity extends AppCompatActivity {
 
         //askPermission();
 
-        
+        defaultColor = ContextCompat.getColor(MainActivity.this, R.color.black);
+
+        imgColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openColorPicker();
+            }
+        });
+    }
+
+    private void openColorPicker(){
+        AmbilWarnaDialog ambilWarnaDialog = new AmbilWarnaDialog(this, defaultColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onCancel(AmbilWarnaDialog dialog) {
+
+            }
+
+            @Override
+            public void onOk(AmbilWarnaDialog dialog, int color) {
+
+                defaultColor = color;
+                signatureView.setPenColor(color);
+            }
+        });
+        ambilWarnaDialog.show();
     }
 
 /*
