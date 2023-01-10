@@ -1,13 +1,17 @@
 package com.example.drawaclip;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.PermissionRequest;
@@ -18,6 +22,8 @@ import android.widget.TextView;
 //import android.support.v4.content.ContextCompat;
 import androidx.core.content.ContextCompat;
 import android.widget.Toast;
+
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -40,6 +46,9 @@ import java.util.Locale;
 import java.util.Date;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.os.Build.VERSION.SDK_INT;
 
 public class MainActivity extends AppCompatActivity {
     int defaultColor;
@@ -124,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void saveImage() throws IOException {
         File file = new File(fileName);
-
+        //System.out.println(fileName);
         Bitmap bitmap = signatureView.getSignatureBitmap();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
@@ -153,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         ambilWarnaDialog.show();
     }
 
-
+/*
     private void askPermission(){
         Dexter.withContext(this).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
             @Override
@@ -166,7 +175,24 @@ public class MainActivity extends AppCompatActivity {
                 permissionToken.continuePermissionRequest();
             }
         }).check();
+    }*/
+private void askPermission() {
+    if (SDK_INT >= Build.VERSION_CODES.R) {
+        try {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            intent.addCategory("android.intent.category.DEFAULT");
+            intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
+            startActivityForResult(intent, 2296);
+        } catch (Exception e) {
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            startActivityForResult(intent, 2296);
+        }
+    } else {
+        //below android 11
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, 2296);
     }
+}
 
 
 }
