@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -53,9 +54,11 @@ import static android.os.Build.VERSION.SDK_INT;
 public class MainActivity extends AppCompatActivity {
     int defaultColor;
     SignatureView signatureView;
-    ImageButton imgEraser, imgColor, imgSave;
+    ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious;
     SeekBar seekBar;
     TextView txtPenSize;
+    ArrayList<Bitmap> frames = new ArrayList();
+
 
     private static String fileName;
     File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/myPaintings");
@@ -66,17 +69,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         signatureView = findViewById(R.id.signature_view);
+        frames.add(signatureView.getSignatureBitmap());
         seekBar = findViewById(R.id.penSize);
         txtPenSize = findViewById(R.id.txtPenSize);
         imgColor = findViewById(R.id.btnColor);
         imgEraser = findViewById(R.id.btnEraser);
         imgSave = findViewById(R.id.btnSave);
+        imgAdd = findViewById(R.id.btnAdd);
+        imgNext = findViewById(R.id.btnNext);
+        imgPrevious = findViewById(R.id.btnPrevious);
+
 
         askPermission();
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
-        String date = format.format(new Date());
-        fileName = path + "/" + date + ".png";
+        //SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+        //String date = format.format(new Date());
+        fileName = path + "/" + "frame_" + (frames.indexOf(signatureView)+1) + ".png";
 
         if(!path.exists()){
             path.mkdirs();
@@ -89,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 txtPenSize.setText(progress + "dp");
                 signatureView.setPenSize(progress);
-                seekBar.setMax(50);
+                seekBar.setMax(100);
             }
 
             @Override
@@ -107,6 +115,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openColorPicker();
+            }
+        });
+
+        imgAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                signatureView.clearCanvas();
+
+
+
             }
         });
 
@@ -134,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
     private void saveImage() throws IOException {
         File file = new File(fileName);
         //System.out.println(fileName);
+
         Bitmap bitmap = signatureView.getSignatureBitmap();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
@@ -162,20 +182,6 @@ public class MainActivity extends AppCompatActivity {
         ambilWarnaDialog.show();
     }
 
-/*
-    private void askPermission(){
-        Dexter.withContext(this).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
-            @Override
-            public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport){
-                Toast.makeText(MainActivity.this, "Granted!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onPermissionRationaleShouldBeShown(List<com.karumi.dexter.listener.PermissionRequest> list, PermissionToken permissionToken) {
-                permissionToken.continuePermissionRequest();
-            }
-        }).check();
-    }*/
 private void askPermission() {
     if (SDK_INT >= Build.VERSION_CODES.R) {
         try {
