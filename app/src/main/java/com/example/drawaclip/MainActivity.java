@@ -35,6 +35,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.kyanogen.signatureview.SignatureView;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,24 +53,28 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.os.Build.VERSION.SDK_INT;
 
 public class MainActivity extends AppCompatActivity {
+    int currentFrame = 1; //note: currentFrame variable counts from 1, decrement to use as index
     int defaultColor;
-    SignatureView signatureView;
-    ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious;
-    SeekBar seekBar;
-    TextView txtPenSize;
-    ArrayList<Bitmap> frames = new ArrayList();
+    private SignatureView frameView;
+    private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious;
+    private SeekBar seekBar;
+    private TextView txtPenSize;
+    private ArrayList<Bitmap> frames = new ArrayList();
+    private int layoutLeft, layoutTop, layoutRight, layoutBottom;
+
+    String projectDir = "ASDF_CHANGE_ME";
 
 
     private static String fileName;
-    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/myPaintings");
+    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/myPaintings" + projectDir);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        signatureView = findViewById(R.id.signature_view);
-        frames.add(signatureView.getSignatureBitmap());
+        frameView = findViewById(R.id.signature_view);
+        frames.add(frameView.getSignatureBitmap());
         seekBar = findViewById(R.id.penSize);
         txtPenSize = findViewById(R.id.txtPenSize);
         imgColor = findViewById(R.id.btnColor);
@@ -84,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         //SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
         //String date = format.format(new Date());
-        fileName = path + "/" + "frame_" + (frames.indexOf(signatureView)+1) + ".png";
+        fileName = path + "/" + "frame_" + currentFrame + ".png";
 
         if(!path.exists()){
             path.mkdirs();
@@ -96,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 txtPenSize.setText(progress + "dp");
-                signatureView.setPenSize(progress);
+                frameView.setPenSize(progress);
                 seekBar.setMax(100);
             }
 
@@ -122,24 +127,53 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                signatureView.clearCanvas();
+
+
+                frameView.clearCanvas();
+                frames.add(frameView.getSignatureBitmap());
+                currentFrame++;
+                System.out.println("cooooool" + currentFrame);
 
 
 
+            }
+        });
+
+        imgNext.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               if (frames.size() >= currentFrame+1) {
+                   frameView.setBitmap(frames.get(currentFrame));
+                   currentFrame++;
+                   System.out.println("wow" + currentFrame);
+
+               }
+           }
+        });
+
+        imgPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentFrame != 1) {
+                    frameView.setBitmap(frames.get(currentFrame-2));
+                    currentFrame--;
+                    System.out.println("cool" + currentFrame);
+
+                }
             }
         });
 
         imgEraser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signatureView.clearCanvas();
+                frameView.clearCanvas();
             }
         });
 
         imgSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!signatureView.isBitmapEmpty()){
+                if(!frameView.isBitmapEmpty()){
                     try{
                         saveImage();
                     } catch (IOException e){
@@ -151,18 +185,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void saveImage() throws IOException {
-        File file = new File(fileName);
-        //System.out.println(fileName);
+        for (Bitmap bitmap:frames) {
+            File file = new File(fileName);
+            //System.out.println(fileName);
 
-        Bitmap bitmap = signatureView.getSignatureBitmap();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-        byte[] bitmapData = bos.toByteArray();
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(bitmapData);
-        fos.flush();
-        fos.close();
-        Toast.makeText(this, "Painting Saved!", Toast.LENGTH_SHORT).show();
+            //Bitmap bitmap = frameView.getSignatureBitmap();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+            byte[] bitmapData = bos.toByteArray();
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bitmapData);
+            fos.flush();
+            fos.close();
+            Toast.makeText(this, "Painting Saved!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void openColorPicker(){
@@ -176,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             public void onOk(AmbilWarnaDialog dialog, int color) {
 
                 defaultColor = color;
-                signatureView.setPenColor(color);
+                frameView.setPenColor(color);
             }
         });
         ambilWarnaDialog.show();
