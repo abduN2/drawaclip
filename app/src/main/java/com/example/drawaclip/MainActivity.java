@@ -145,7 +145,10 @@ public class MainActivity extends AppCompatActivity {
                 frameView.clearCanvas();
                 frames.add(frameView.getSignatureBitmap());
                 currentFrame++;
+                previousFrame();
+                nextFrame();
                 System.out.println("cooooool" + currentFrame);
+                System.out.println(frames.get(currentFrame-1));
                 try {
                     if (frames.get(0) == null) {
                         System.out.println("wtf bro 2");
@@ -161,34 +164,14 @@ public class MainActivity extends AppCompatActivity {
         imgNext.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               if (frames.size() > currentFrame) {
-                   System.out.println(currentFrame+" 1");
-                   frameView.setBitmap(frames.get(currentFrame));
-                   System.out.println(currentFrame+" 2");
-                   currentFrame++;
-                   System.out.println(currentFrame+" 3");
-                   if (frames.get(currentFrame-1) != null) {
-                       System.out.println("wow" + currentFrame);
-                   }
-
-               }
+               nextFrame();
            }
         });
 
         imgPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentFrame != 1) {
-                    System.out.println(currentFrame+" 4");
-                    frameView.setBitmap(frames.get(currentFrame-2));
-                    System.out.println(currentFrame+" 5");
-                    currentFrame--;
-                    System.out.println(currentFrame+" 6");
-                    if (frames.get(currentFrame-1) != null) {
-                        System.out.println("cool" + currentFrame);
-                    }
-
-                }
+                previousFrame();
             }
         });
 
@@ -213,8 +196,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void nextFrame() {
+
+        if (frames.size() > currentFrame) {
+            System.out.println(currentFrame+" 1");
+            frameView.setBitmap(frames.get(currentFrame));
+            System.out.println(currentFrame+" 2");
+            currentFrame++;
+            System.out.println(currentFrame+" 3");
+            if (frames.get(currentFrame-1) != null) {
+                System.out.println("wow" + currentFrame);
+                System.out.println(frames.get(currentFrame-1));
+            }
+
+        }
+
+    }
+
+    private void previousFrame() {
+        if (currentFrame != 1) {
+            System.out.println(currentFrame+" 4");
+            frameView.setBitmap(frames.get(currentFrame-2));
+            System.out.println(currentFrame+" 5");
+            currentFrame--;
+            System.out.println(currentFrame+" 6");
+            if (frames.get(currentFrame-1) != null) {
+                System.out.println("cool" + currentFrame);
+                System.out.println(frames.get(currentFrame-1));
+            }
+
+        }
+
+    }
+
     private void saveImage() throws IOException {
         for (Bitmap bitmap:frames) {
+            fileName = path + "/" + "frame_" + (frames.lastIndexOf(bitmap)+1) + ".png";
             File file = new File(fileName);
             //System.out.println(fileName);
 
