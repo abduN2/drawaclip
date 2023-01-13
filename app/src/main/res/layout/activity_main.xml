@@ -105,6 +105,17 @@
             android:gravity="end">
 
             <ImageButton
+                android:id="@+id/btnVid"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:scaleType="center"
+                android:src="@drawable/ic_play">
+
+            </ImageButton>
+
+            <ImageButton
                 android:id="@+id/btnPrevious"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
@@ -114,6 +125,8 @@
                 android:src="@drawable/ic_previous_frame">
 
             </ImageButton>
+
+
 
             <ImageButton
                 android:id="@+id/btnAdd"
