@@ -132,6 +132,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        imgSaveVid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Abdul works on this");
+            }
+        });
+
+        imgPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("John works on this");
+            }
+        });
+
         imgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
