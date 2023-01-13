@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     int currentFrame = 1; //note: currentFrame variable counts from 1, decrement to use as index
     int defaultColor;
     private SignatureView frameView;
-    private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious, imgPlay;
+    private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious, imgPlay, imgSaveVid;
     private SeekBar seekBar;
     private TextView txtPenSize;
     private ArrayList<Bitmap> frames = new ArrayList();
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         imgNext = findViewById(R.id.btnNext);
         imgPrevious = findViewById(R.id.btnPrevious);
         imgPlay = findViewById(R.id.btnVid);
+        imgSaveVid = findViewById(R.id.btnVidSave);
 
 
         askPermission();

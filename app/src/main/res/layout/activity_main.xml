@@ -105,6 +105,17 @@
             android:gravity="end">
 
             <ImageButton
+                android:id="@+id/btnVidSave"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:scaleType="center"
+                android:src="@drawable/ic_save_vid">
+
+            </ImageButton>
+
+            <ImageButton
                 android:id="@+id/btnVid"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
