@@ -75,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
 
         frameView = findViewById(R.id.signature_view);
         frames.add(frameView.getSignatureBitmap());
+        try {
+            if (frames.get(0) == null) {
+                System.out.println("wtf bro 1");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         seekBar = findViewById(R.id.penSize);
         txtPenSize = findViewById(R.id.txtPenSize);
         imgColor = findViewById(R.id.btnColor);
@@ -128,12 +135,24 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-
+                try {
+                    if (frames.get(0) == null) {
+                        frames.set(0, frameView.getSignatureBitmap());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 frameView.clearCanvas();
                 frames.add(frameView.getSignatureBitmap());
                 currentFrame++;
                 System.out.println("cooooool" + currentFrame);
-
+                try {
+                    if (frames.get(0) == null) {
+                        System.out.println("wtf bro 2");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
 
             }
@@ -142,10 +161,15 @@ public class MainActivity extends AppCompatActivity {
         imgNext.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               if (frames.size() >= currentFrame+1) {
+               if (frames.size() > currentFrame) {
+                   System.out.println(currentFrame+" 1");
                    frameView.setBitmap(frames.get(currentFrame));
+                   System.out.println(currentFrame+" 2");
                    currentFrame++;
-                   System.out.println("wow" + currentFrame);
+                   System.out.println(currentFrame+" 3");
+                   if (frames.get(currentFrame-1) != null) {
+                       System.out.println("wow" + currentFrame);
+                   }
 
                }
            }
@@ -155,9 +179,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (currentFrame != 1) {
+                    System.out.println(currentFrame+" 4");
                     frameView.setBitmap(frames.get(currentFrame-2));
+                    System.out.println(currentFrame+" 5");
                     currentFrame--;
-                    System.out.println("cool" + currentFrame);
+                    System.out.println(currentFrame+" 6");
+                    if (frames.get(currentFrame-1) != null) {
+                        System.out.println("cool" + currentFrame);
+                    }
 
                 }
             }
