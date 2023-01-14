@@ -34,9 +34,11 @@
                 android:layout_marginStart="8dp"
                 android:id="@+id/penSize"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:thumb="@drawable/ic_seek_bar">
 
             </SeekBar>
+
 
             <TextView
                 android:id="@+id/txtPenSize"
