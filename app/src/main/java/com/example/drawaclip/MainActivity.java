@@ -161,11 +161,16 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 frameView.clearCanvas();
-                frames.add(frameView.getSignatureBitmap());
+                if (currentFrame == frames.size()) {
+                    frames.add(frameView.getSignatureBitmap());
+                } else {
+                    frames.add(currentFrame, frameView.getSignatureBitmap());
+                }
+
                 currentFrame++;
                 previousFrame();
                 nextFrame();
-                txtFrame.setText("Frame" + currentFrame);
+                txtFrame.setText(String.valueOf(currentFrame));
                 System.out.println("cooooool" + currentFrame);
                 System.out.println(frames.get(currentFrame-1));
                 try {
@@ -184,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
            @Override
            public void onClick(View v) {
                nextFrame();
-               txtFrame.setText("Frame" + currentFrame);
+               txtFrame.setText(String.valueOf(currentFrame));
            }
         });
 
@@ -192,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 previousFrame();
-                txtFrame.setText("Frame" + currentFrame);
+                txtFrame.setText(String.valueOf(currentFrame));
             }
         });
 
