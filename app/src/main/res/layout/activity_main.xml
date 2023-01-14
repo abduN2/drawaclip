@@ -104,6 +104,16 @@
             android:layout_weight="1"
             android:gravity="end">
 
+
+            <TextView
+                android:id="@+id/txtframe"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Frame 1"
+                android:textColor="#000000">
+            </TextView>
+
             <ImageButton
                 android:id="@+id/btnVidSave"
                 android:layout_width="0dp"
@@ -136,7 +146,6 @@
                 android:src="@drawable/ic_previous_frame">
 
             </ImageButton>
-
 
 
             <ImageButton

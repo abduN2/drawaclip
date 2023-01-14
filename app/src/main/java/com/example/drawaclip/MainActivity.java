@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious, imgPlay, imgSaveVid;
     private SeekBar seekBar;
     private TextView txtPenSize;
+    private TextView txtFrame;
     private ArrayList<Bitmap> frames = new ArrayList();
     private int layoutLeft, layoutTop, layoutRight, layoutBottom;
 
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }
         seekBar = findViewById(R.id.penSize);
         txtPenSize = findViewById(R.id.txtPenSize);
+        txtFrame = findViewById(R.id.txtframe);
         imgColor = findViewById(R.id.btnColor);
         imgEraser = findViewById(R.id.btnEraser);
         imgSave = findViewById(R.id.btnSave);
@@ -163,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 currentFrame++;
                 previousFrame();
                 nextFrame();
+                txtFrame.setText("Frame" + currentFrame);
                 System.out.println("cooooool" + currentFrame);
                 System.out.println(frames.get(currentFrame-1));
                 try {
@@ -181,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
            @Override
            public void onClick(View v) {
                nextFrame();
+               txtFrame.setText("Frame" + currentFrame);
            }
         });
 
@@ -188,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 previousFrame();
+                txtFrame.setText("Frame" + currentFrame);
             }
         });
 
