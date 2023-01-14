@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 int frameSize = frames.size();
                 int fps = 12/frames.size();
                 for(int i = 0; i < frameSize; i++){
-                    //TimeUnit.SECONDS.sleep(12/fps);
+                    //TimeUnit.SECONDS.sleep(fps);
                     nextFrame();
                 }
 
