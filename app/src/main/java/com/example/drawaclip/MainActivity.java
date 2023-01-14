@@ -46,6 +46,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -137,14 +138,20 @@ public class MainActivity extends AppCompatActivity {
         imgSaveVid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Abdul works on this");
+                System.out.println("being worked on (not rly)");
             }
         });
 
         imgPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("John works on this");
+                int frameSize = frames.size();
+                int fps = 12/frames.size();
+                for(int i = 0; i < frameSize; i++){
+                    //TimeUnit.SECONDS.sleep(12/fps);
+                    nextFrame();
+                }
+
             }
         });
 
