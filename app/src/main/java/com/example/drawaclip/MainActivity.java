@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 //import android.support.v4.content.ContextCompat;
 import androidx.core.content.ContextCompat;
 import android.widget.Toast;
+import java.lang.Thread;
 
 
 
@@ -146,10 +148,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int frameSize = frames.size();
-                int fps = 12/frames.size();
+                final Handler handler = new Handler();
                 for(int i = 0; i < frameSize; i++){
-                    //TimeUnit.SECONDS.sleep(fps);
-                    nextFrame();
+
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            nextFrame();
+                            txtFrame.setText(String.valueOf(currentFrame));
+                        }
+                    }, 1000 / 12);
                 }
 
             }
