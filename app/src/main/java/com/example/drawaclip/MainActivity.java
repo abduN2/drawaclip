@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 //import android.support.v4.content.ContextCompat;
 import androidx.core.content.ContextCompat;
 import android.widget.Toast;
+
+import java.io.FileInputStream;
 import java.lang.Thread;
 
 
@@ -48,6 +51,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -63,14 +67,15 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private TextView txtPenSize;
     private TextView txtFrame;
-    private ArrayList<Bitmap> frames = new ArrayList();
+    private ArrayList<Bitmap> frames = new ArrayList(0);
     private int layoutLeft, layoutTop, layoutRight, layoutBottom;
+    private FileInputStream fileGetter;
 
     String projectDir = "ASDF_CHANGE_ME";
 
 
     private static String fileName;
-    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/myPaintings" + projectDir);
+    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DrawAClip/" + projectDir);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             if (frames.get(0) == null) {
                 System.out.println("wtf bro 1");
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         imgSaveVid = findViewById(R.id.btnVidSave);
 
 
+
+
         askPermission();
 
         //SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
@@ -106,7 +114,32 @@ public class MainActivity extends AppCompatActivity {
         fileName = path + "/" + "frame_" + currentFrame + ".png";
 
         if(!path.exists()){
+            System.out.println("piojwfapojwafojpwafjopwfajopwfa did it");
             path.mkdirs();
+        }
+
+        try {
+            File[] savedFrames = Objects.requireNonNull(path.listFiles());
+            System.out.println(savedFrames.length);
+            System.out.println(savedFrames[0].getCanonicalPath());
+
+            int noOfFrames = savedFrames.length;
+            for (int i = 0; i < noOfFrames; i++) {
+                fileGetter = new FileInputStream(savedFrames[i]);
+                System.out.println(frames.get(0));
+                if (frames.get(0) == null) {
+                    frames.set(0, BitmapFactory.decodeStream(fileGetter).copy(Bitmap.Config.ARGB_8888, true));
+                } else {
+                    frames.add(BitmapFactory.decodeStream(fileGetter).copy(Bitmap.Config.ARGB_8888, true));
+                }
+                System.out.println(savedFrames[i] + "978465");
+                System.out.println(frames.get(i) + "jgkfwar");
+                fileGetter.close();
+            }
+            frameView.setBitmap(frames.get(0));
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         defaultColor = ContextCompat.getColor(MainActivity.this, R.color.black);
@@ -230,6 +263,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!frameView.isBitmapEmpty()){
                     try{
+                        try {
+                            if (frames.get(0) == null) {
+                                frames.set(0, frameView.getSignatureBitmap());
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         saveImage();
                     } catch (IOException e){
                         e.printStackTrace();
