@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int frameSize = frames.size();
-                final Handler handler = new Handler();
+                int oldFrame = currentFrame;
                 final int delay = 1000 / 12;
                 for(int i = 0; i < frameSize; i++){
                     final int index = i;
@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, delay*i);
                 }
+
 
             }
         });
