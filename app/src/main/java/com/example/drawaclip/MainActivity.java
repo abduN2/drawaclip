@@ -152,10 +152,13 @@ public class MainActivity extends AppCompatActivity {
                 for(int i = 0; i < frameSize; i++){
 
 
+                    nextFrame();
+
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            nextFrame();
+
+                            //nextFrame();
                             txtFrame.setText(String.valueOf(currentFrame));
                         }
                     }, 1000 / 12);
