@@ -181,18 +181,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int frameSize = frames.size();
-                final Handler handler = new Handler();
+                int oldFrame = currentFrame;
+                final int delay = 1000 / 12;
                 for(int i = 0; i < frameSize; i++){
-
-
-                    handler.postDelayed(new Runnable() {
-                        @Override
+                    final int index = i;
+                    frameView.postDelayed(new Runnable() {
                         public void run() {
                             nextFrame();
                             txtFrame.setText(String.valueOf(currentFrame));
+
                         }
-                    }, 1000 / 12);
+                    }, delay*i);
                 }
+
 
             }
         });
