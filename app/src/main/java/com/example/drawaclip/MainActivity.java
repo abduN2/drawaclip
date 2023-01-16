@@ -1,43 +1,26 @@
 package com.example.drawaclip;
-
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.Settings;
-import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.PermissionRequest;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-//import android.support.v4.content.ContextCompat;
 import androidx.core.content.ContextCompat;
 import android.widget.Toast;
 
 import java.io.FileInputStream;
-import java.lang.Thread;
-
-
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.arthenica.ffmpegkit.FFmpegSession;
+import com.arthenica.ffmpegkit.ReturnCode;
 import com.kyanogen.signatureview.SignatureView;
 
 
@@ -45,14 +28,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Date;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+import com.arthenica.ffmpegkit.FFmpegKit;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -72,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private int layoutLeft, layoutTop, layoutRight, layoutBottom;
     private FileInputStream fileGetter;
 
+
     String projectDir = "ASDF_CHANGE_ME";
 
 
@@ -82,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         frameView = findViewById(R.id.signature_view);
         frames.add(frameView.getSignatureBitmap());
@@ -114,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         //SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
         //String date = format.format(new Date());
+
         fileName = path + "/" + "frame_" + currentFrame + ".png";
 
         if(!path.exists()){
@@ -197,7 +179,18 @@ public class MainActivity extends AppCompatActivity {
         imgSaveVid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("being worked on (not rly)");
+
+                    //code
+                    FFmpegSession session = FFmpegKit.execute("ffmpeg -r "+framesPerSecond+ " -i " + path+"/ -vcodec libx264 -pix_fmt yuv420p -crf 20 out.mp4");
+                    if(ReturnCode.isSuccess(session.getReturnCode())){
+                        Toast.makeText(MainActivity.this, "Successfully created animation!", Toast.LENGTH_SHORT).show();
+                    } else if(ReturnCode.isCancel(session.getReturnCode())){
+                        Toast.makeText(MainActivity.this, "Export Cancelled", Toast.LENGTH_SHORT).show();
+                    } else{
+                        Toast.makeText(MainActivity.this, "Couldn't create animation!", Toast.LENGTH_SHORT).show();
+                    }
+
+
             }
         });
 
@@ -312,6 +305,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+
     private void nextFrame() {
 
         if (frames.size() > currentFrame) {
@@ -328,6 +325,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+
 
     private void previousFrame() {
         if (currentFrame != 1) {
