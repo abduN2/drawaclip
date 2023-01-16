@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                     //use ffmpeg to save as a video
-                    FFmpegSession session = FFmpegKit.execute("ffmpeg -framerate "+framesPerSecond+ " -i "+path+"/*.png -vcodec libx264 -pix_fmt yuv420p -crf 20 out.mp4");
+                    FFmpegSession session = FFmpegKit.execute("ffmpeg -framerate "+framesPerSecond+ " -i *.png -vcodec libx264 -pix_fmt yuv420p -crf 20 -c:v mpeg4 out.mp4");
                     if(ReturnCode.isSuccess(session.getReturnCode())){
                         Toast.makeText(MainActivity.this, "Successfully created animation!", Toast.LENGTH_SHORT).show();
                     } else if(ReturnCode.isCancel(session.getReturnCode())){
