@@ -34,9 +34,13 @@
                 android:layout_marginStart="8dp"
                 android:id="@+id/penSize"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:thumb="@drawable/ic_seek_bar"
+                android:thumbTint="@color/black"
+                android:progressTint="@color/black">
 
             </SeekBar>
+
 
             <TextView
                 android:id="@+id/txtPenSize"
@@ -102,7 +106,39 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:layout_weight="1"
-            android:gravity="end">
+            android:gravity="end"
+            android:bo="@color/black">
+
+
+            <TextView
+                android:id="@+id/txtframe"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="#000000"></TextView>
+
+            <ImageButton
+                android:id="@+id/btnVidSave"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:scaleType="center"
+                android:src="@drawable/ic_save_vid">
+
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/btnVid"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:scaleType="center"
+                android:src="@drawable/ic_play">
+
+            </ImageButton>
 
             <ImageButton
                 android:id="@+id/btnPrevious"
@@ -114,6 +150,7 @@
                 android:src="@drawable/ic_previous_frame">
 
             </ImageButton>
+
 
             <ImageButton
                 android:id="@+id/btnAdd"
