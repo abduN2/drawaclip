@@ -1,4 +1,5 @@
 package com.example.drawaclip;
+//imports yay
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,26 +40,25 @@ import static android.os.Build.VERSION.SDK_INT;
 
 public class MainActivity extends AppCompatActivity {
     int currentFrame = 1; //note: currentFrame variable counts from 1, decrement to use as index
-    int defaultColor;
-    private SignatureView frameView;
-    private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious, imgPlay, imgSaveVid;
-    private SeekBar seekBar, fpsBar;
-    private TextView txtPenSize, txtFPS;
-    private int framesPerSecond = 12;
-    private TextView txtFrame;
-    private ArrayList<Bitmap> frames = new ArrayList(0);
-    private int layoutLeft, layoutTop, layoutRight, layoutBottom;
+    int defaultColor; //color of pen
+    private SignatureView frameView; //drawing panel
+    private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious, imgPlay, imgSaveVid; //all the different buttons
+    private SeekBar seekBar, fpsBar; //progress bars, seekBar is for size of pen, fpsBar is for user's choice of fps
+    private TextView txtPenSize, txtFPS; //actual values of seekbar and fpsBar, txtPenSize is for seekBar and txtFPS is for fpsBar
+    private int framesPerSecond = 12; //integer value of txtFPS used for playing the animation and saving it
+    private TextView txtFrame; //text indicator of the frame user is editing
+    private ArrayList<Bitmap> frames = new ArrayList(0); //array list of frames
     private FileInputStream fileGetter;
 
 
-    String projectDir = "ASDF_CHANGE_ME";
+    String projectDir = "ASDF_CHANGE_ME"; //directory
 
 
-    private static String fileName;
-    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DrawAClip/" + projectDir);
+    private static String fileName; //file name variable
+    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DrawAClip/" + projectDir); //get directory
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) { //on create, where all the magic happens
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //define all the variables used
         seekBar = findViewById(R.id.penSize);
         fpsBar = findViewById(R.id.frameSize);
         txtPenSize = findViewById(R.id.txtPenSize);
@@ -91,12 +92,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        askPermission();
+        askPermission(); //ask for all permissions used to fetch images and saving stuff
 
-        //SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
-        //String date = format.format(new Date());
-
-        fileName = path + "/" + "frame_" + currentFrame + ".png";
+        fileName = path + "/" + "frame_" + currentFrame + ".png"; //set file name for each frame
 
         if(!path.exists()){
             System.out.println("piojwfapojwafojpwafjopwfajopwfa did it");
@@ -127,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        defaultColor = ContextCompat.getColor(MainActivity.this, R.color.black);
+        defaultColor = ContextCompat.getColor(MainActivity.this, R.color.black); //default pen color
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { //seek bar, method to change the size of the drawing pen
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 txtPenSize.setText(progress + "dp");
@@ -149,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        fpsBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        fpsBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { //fpsBar, method to change the fps of the animation
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 txtFPS.setText(progress + "fps");
@@ -169,19 +167,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        imgColor.setOnClickListener(new View.OnClickListener() {
+        imgColor.setOnClickListener(new View.OnClickListener() { //method to choose drawing color of the pen
             @Override
             public void onClick(View v) {
                 openColorPicker();
             }
         });
 
-        imgSaveVid.setOnClickListener(new View.OnClickListener() {
+        imgSaveVid.setOnClickListener(new View.OnClickListener() { //method to save animation as a video
             @Override
             public void onClick(View v) {
 
-                    //code
-                    FFmpegSession session = FFmpegKit.execute("ffmpeg -r "+framesPerSecond+ " -i " + path+"/ -vcodec libx264 -pix_fmt yuv420p -crf 20 out.mp4");
+                    //use ffmpeg to save as a video
+                    FFmpegSession session = FFmpegKit.execute("ffmpeg -framerate "+framesPerSecond+ " -i "+path+"/*.png -vcodec libx264 -pix_fmt yuv420p -crf 20 out.mp4");
                     if(ReturnCode.isSuccess(session.getReturnCode())){
                         Toast.makeText(MainActivity.this, "Successfully created animation!", Toast.LENGTH_SHORT).show();
                     } else if(ReturnCode.isCancel(session.getReturnCode())){
