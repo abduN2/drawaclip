@@ -64,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
     int defaultColor;
     private SignatureView frameView;
     private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious, imgPlay, imgSaveVid;
-    private SeekBar seekBar;
-    private TextView txtPenSize;
+    private SeekBar seekBar, fpsBar;
+    private TextView txtPenSize, txtFPS;
+    private int framesPerSecond = 12;
     private TextView txtFrame;
     private ArrayList<Bitmap> frames = new ArrayList(0);
     private int layoutLeft, layoutTop, layoutRight, layoutBottom;
@@ -93,7 +94,9 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         seekBar = findViewById(R.id.penSize);
+        fpsBar = findViewById(R.id.frameSize);
         txtPenSize = findViewById(R.id.txtPenSize);
+        txtFPS = findViewById(R.id.txtFPS);
         txtFrame = findViewById(R.id.txtframe);
         imgColor = findViewById(R.id.btnColor);
         imgEraser = findViewById(R.id.btnEraser);
@@ -150,6 +153,27 @@ public class MainActivity extends AppCompatActivity {
                 txtPenSize.setText(progress + "dp");
                 frameView.setPenSize(progress);
                 seekBar.setMax(100);
+                seekBar.setMin(1);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        fpsBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                txtFPS.setText(progress + "fps");
+                framesPerSecond = progress;
+                fpsBar.setMax(60);
+                fpsBar.setMin(12);
             }
 
             @Override
@@ -182,7 +206,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int frameSize = frames.size();
                 int oldFrame = currentFrame;
-                final int delay = 1000 / 12;
+                final int delay = 1000 / framesPerSecond;
+                try {
+                    frameView.setBitmap(frames.get(0));
+
+                    currentFrame = 1;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 for(int i = 0; i < frameSize; i++){
                     final int index = i;
                     frameView.postDelayed(new Runnable() {

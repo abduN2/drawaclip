@@ -29,6 +29,7 @@
             android:layout_margin="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <SeekBar
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
@@ -40,6 +41,7 @@
                 android:progressTint="@color/black">
 
             </SeekBar>
+
 
 
             <TextView
@@ -106,8 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:layout_weight="1"
-            android:gravity="end"
-            android:bo="@color/black">
+            android:gravity="end">
 
 
             <TextView
@@ -174,6 +175,36 @@
 
             </ImageButton>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="227dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:gravity="end">
+
+            <SeekBar
+                android:id="@+id/frameSize"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:progressTint="@color/black"
+                android:thumb="@drawable/ic_seek_bar"
+                android:thumbTint="@color/black">
+
+            </SeekBar>
+
+
+            <TextView
+                android:id="@+id/txtFPS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12fps"
+                android:textColor="#000000">
+
+            </TextView>
         </LinearLayout>
     </LinearLayout>
 
