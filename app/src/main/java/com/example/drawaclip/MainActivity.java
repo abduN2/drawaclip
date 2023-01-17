@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        frameView = findViewById(R.id.signature_view);
+        frameView = findViewById(R.id.signature_view); //draw panel
         frames.add(frameView.getSignatureBitmap());
         try {
             if (frames.get(0) == null) {
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
         fileName = path + "/" + "frame_" + currentFrame + ".png"; //set file name for each frame
 
-        if(!path.exists()){
+        if(!path.exists()){ //check that path exists yk
             System.out.println("piojwfapojwafojpwafjopwfajopwfa did it");
             path.mkdirs();
         }
@@ -192,36 +192,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        imgPlay.setOnClickListener(new View.OnClickListener() {
+        imgPlay.setOnClickListener(new View.OnClickListener() { //play button to go through animation
             @Override
             public void onClick(View v) {
-                int frameSize = frames.size();
+                int frameSize = frames.size(); //get frame array list size, used for a for loop
                 int oldFrame = currentFrame;
-                final int delay = 1000 / framesPerSecond;
+                final int delay = 1000 / framesPerSecond; //get delay for chosen user fps
                 try {
-                    frameView.setBitmap(frames.get(0));
+                    frameView.setBitmap(frames.get(0)); //go back to frame 1 so user can watch animation from start to end
 
                     currentFrame = 1;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                for(int i = 0; i < frameSize; i++){
+                for(int i = 0; i < frameSize; i++){ //for loop to change the UI display to next frame every however much delay is depending on chosen fps
                     final int index = i;
                     frameView.postDelayed(new Runnable() {
                         public void run() {
-                            nextFrame();
-                            txtFrame.setText(String.valueOf(currentFrame));
+                            nextFrame(); //move to next frame
+                            txtFrame.setText(String.valueOf(currentFrame)); //change through frame numbers!
 
                         }
-                    }, delay*i);
+                    }, delay*i); //delay stuff to control speed of the for loop to make sure its at the correct FPS
                 }
 
 
             }
         });
 
-        imgAdd.setOnClickListener(new View.OnClickListener() {
+        imgAdd.setOnClickListener(new View.OnClickListener() { //method to make a new frame!
             @Override
             public void onClick(View v) {
 
@@ -258,31 +258,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        imgNext.setOnClickListener(new View.OnClickListener() {
+        imgNext.setOnClickListener(new View.OnClickListener() { //method to move to next frame
            @Override
            public void onClick(View v) {
-               nextFrame();
-               txtFrame.setText(String.valueOf(currentFrame));
+               nextFrame(); //call nextFrame method
+               txtFrame.setText(String.valueOf(currentFrame)); //change visual display to new frame number
            }
         });
 
-        imgPrevious.setOnClickListener(new View.OnClickListener() {
+        imgPrevious.setOnClickListener(new View.OnClickListener() { //method to move to previous frame
             @Override
             public void onClick(View v) {
-                previousFrame();
-                txtFrame.setText(String.valueOf(currentFrame));
+                previousFrame(); //call previousFrame method
+                txtFrame.setText(String.valueOf(currentFrame)); //change visual display to new frame number
             }
         });
 
-        imgEraser.setOnClickListener(new View.OnClickListener() {
+        imgEraser.setOnClickListener(new View.OnClickListener() { //delete frame button
             @Override
             public void onClick(View v) {
-                frameView.clearCanvas();
+                frameView.clearCanvas(); //clear current frame
                 frames.set(currentFrame-1, frameView.getSignatureBitmap());
             }
         });
 
-        imgSave.setOnClickListener(new View.OnClickListener() {
+        imgSave.setOnClickListener(new View.OnClickListener() { //method to save all work done to work on animation later
             @Override
             public void onClick(View v) {
                 if(!frameView.isBitmapEmpty()){
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void nextFrame() {
+    private void nextFrame() { //method to move to next frame
 
         if (frames.size() > currentFrame) {
             System.out.println(currentFrame+" 1");
@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void previousFrame() {
+    private void previousFrame() { //method to move to previous frame
         if (currentFrame != 1) {
             System.out.println(currentFrame+" 4");
             frameView.setBitmap(frames.get(currentFrame-2));
@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void saveImage() throws IOException {
+    private void saveImage() throws IOException { //method to actually save each frame for wanting to use your work for later
         for (Bitmap bitmap:frames) {
             fileName = path + "/" + "frame_" + (frames.lastIndexOf(bitmap)+1) + ".png";
             File file = new File(fileName);
@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void openColorPicker(){
+    private void openColorPicker(){ //method for changing the color of the drawing pen
         AmbilWarnaDialog ambilWarnaDialog = new AmbilWarnaDialog(this, defaultColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {
@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
         ambilWarnaDialog.show();
     }
 
-private void askPermission() {
+private void askPermission() { //ask permission method to give app proper permissions to save and pull frame information
     if (SDK_INT >= Build.VERSION_CODES.R) {
         try {
             Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
