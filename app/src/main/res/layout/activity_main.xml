@@ -74,6 +74,17 @@
 
             </ImageButton>
 
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:background="@color/white"
+                android:scaleType="center"
+                android:src="@drawable/ic_delete"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="70dp">
+
+            </ImageButton>
+
             <!-- Button to change pen color -->
             <ImageButton
                 android:id="@+id/btnColor"
@@ -108,7 +119,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="81dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -194,7 +206,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:layout_weight="1"
-            android:gravity="end">
+            android:gravity="end"
+            android:background="@color/white">
 
             <!-- seek bar that allows user to actually customize the fps -->
             <SeekBar

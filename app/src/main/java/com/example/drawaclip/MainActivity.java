@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     int currentFrame = 1; //note: currentFrame variable counts from 1, decrement to use as index
     int defaultColor; //color of pen
     private SignatureView frameView; //drawing panel
-    private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious, imgPlay, imgSaveVid; //all the different buttons
+    private ImageButton imgEraser, imgColor, imgSave, imgAdd, imgNext, imgPrevious, imgPlay, imgSaveVid, imgDelete; //all the different buttons
     private SeekBar seekBar, fpsBar; //progress bars, seekBar is for size of pen, fpsBar is for user's choice of fps
     private TextView txtPenSize, txtFPS; //actual values of seekbar and fpsBar, txtPenSize is for seekBar and txtFPS is for fpsBar
     private int framesPerSecond = 12; //integer value of txtFPS used for playing the animation and saving it
@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         imgPrevious = findViewById(R.id.btnPrevious);
         imgPlay = findViewById(R.id.btnVid);
         imgSaveVid = findViewById(R.id.btnVidSave);
+        imgDelete = findViewById(R.id.btnDelete);
 
 
 
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     saveImage(); //make sure stuff is saved as images first
-                    FFmpegSession session = FFmpegKit.execute("-framerate "+framesPerSecond+ " -i " + path + "/frame_%04d.png -vcodec libx264 -pix_fmt yuv420p -crf 20 -vf pad=ceil(iw/2)*2:ceil(ih/2)*2:color=white " + path + "/output.mp4"); //use ffmpeg to call line of command
+                    FFmpegSession session = FFmpegKit.execute("-y -framerate "+framesPerSecond+ " -i " + path + "/frame_%04d.png -vcodec libx264 -pix_fmt yuv420p -crf 20 -vf pad=ceil(iw/2)*2:ceil(ih/2)*2:color=white " + path + "/output.mp4"); //use ffmpeg to call line of command
                     if(ReturnCode.isSuccess(session.getReturnCode())){ //success!
                         Toast.makeText(MainActivity.this, "Successfully created animation!", Toast.LENGTH_SHORT).show();
                     } else if(ReturnCode.isCancel(session.getReturnCode())){ //cancelled..?
@@ -272,11 +273,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        imgEraser.setOnClickListener(new View.OnClickListener() { //delete frame button
+        imgEraser.setOnClickListener(new View.OnClickListener() { //erase frame button
             @Override
             public void onClick(View v) {
                 frameView.clearCanvas(); //clear current frame
                 frames.set(currentFrame-1, frameView.getSignatureBitmap());
+                frameView.setBitmap(frames.get(currentFrame-1));
+            }
+        });
+
+        imgDelete.setOnClickListener(new View.OnClickListener() { //delete frame button
+            @Override
+            public void onClick(View v) {
+                if(frames.size() > 1){
+                    File findFile = new File(path + "/frame_" + String.format("%04d", currentFrame) + ".png");
+                    findFile.delete();
+                    frames.remove(currentFrame-1);
+                    if (currentFrame-1 != frames.size()) {
+                        frameView.setBitmap(frames.get(currentFrame-1));
+                        txtFrame.setText(String.valueOf(currentFrame));
+                    } else {
+                        frameView.setBitmap(frames.get(currentFrame-2));
+                        currentFrame--;
+                        txtFrame.setText(String.valueOf(currentFrame));
+                    }
+                }
             }
         });
 
