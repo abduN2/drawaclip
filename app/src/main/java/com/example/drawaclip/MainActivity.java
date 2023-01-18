@@ -1,5 +1,9 @@
 package com.example.drawaclip;
 //imports yay
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.os.Build.VERSION.SDK_INT;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,31 +16,26 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import androidx.core.content.ContextCompat;
 import android.widget.Toast;
-
-import java.io.FileInputStream;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.arthenica.ffmpegkit.FFmpegKit;
 import com.arthenica.ffmpegkit.FFmpegSession;
 import com.arthenica.ffmpegkit.ReturnCode;
 import com.kyanogen.signatureview.SignatureView;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
-import com.arthenica.ffmpegkit.FFmpegKit;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
-
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.os.Build.VERSION.SDK_INT;
 
 public class MainActivity extends AppCompatActivity {
     int currentFrame = 1; //note: currentFrame variable counts from 1, decrement to use as index
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static String fileName; //file name variable
-    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DrawAClip/" + projectDir); //get directory
+    File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DrawAClip/" + projectDir); //get directory for where frames are saved
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { //on create, where all the magic happens
@@ -344,11 +343,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveImage() throws IOException { //method to actually save each frame for wanting to use your work for later
         for (Bitmap bitmap:frames) {
-            fileName = path + "/" + "frame_" + (frames.lastIndexOf(bitmap)+1) + ".png";
-            File file = new File(fileName);
-            //System.out.println(fileName);
-
-            //Bitmap bitmap = frameView.getSignatureBitmap();
+            fileName = path + "/" + "frame_" + (frames.lastIndexOf(bitmap)+1) + ".png"; //save file under a name of frame_(frame number), so if saving frame 1, its saved as frame_1
+            File file = new File(fileName); //make the file
+            //actually save it into files under images into the specific path
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
             byte[] bitmapData = bos.toByteArray();
@@ -371,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
             public void onOk(AmbilWarnaDialog dialog, int color) {
 
                 defaultColor = color;
-                frameView.setPenColor(color);
+                frameView.setPenColor(color); //set chosen color to actual pen color
             }
         });
         ambilWarnaDialog.show();
@@ -379,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
 
 private void askPermission() { //ask permission method to give app proper permissions to save and pull frame information
     if (SDK_INT >= Build.VERSION_CODES.R) {
-        try {
+        try { //make a pop up when launch app, actual part that asks for permission
             Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
             intent.addCategory("android.intent.category.DEFAULT");
             intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
@@ -390,7 +387,6 @@ private void askPermission() { //ask permission method to give app proper permis
             startActivityForResult(intent, 2296);
         }
     } else {
-        //below android 11
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, 2296);
     }
 }

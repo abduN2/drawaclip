@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
+    <!-- SignatureView is whats used for the drawing with a pen aspect, prevents potential wrong areas drawn on when the cursor is somewhere else-->
     <com.kyanogen.signatureview.SignatureView
         xmlns:sign="https://schemas.android.com/apk/res-auto"
         android:id="@+id/signature_view"
@@ -17,6 +17,7 @@
         android:layout_above="@+id/optionsHolder"
         sign:enableSignature="true"/>
 
+    <!--- This next linear layout is the bottom part of the app for those 3 buttons and pen size-->
     <LinearLayout
         android:id="@+id/optionsHolder"
         android:orientation="horizontal"
@@ -30,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- This seek bar is what allows the user to customize the drawing pen's size-->
             <SeekBar
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
@@ -43,7 +45,7 @@
             </SeekBar>
 
 
-
+            <!-- Actually let the user know the size of their pen-->
             <TextView
                 android:id="@+id/txtPenSize"
                 android:layout_width="wrap_content"
@@ -60,6 +62,7 @@
             android:gravity="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <!-- Delete frame button -->
             <ImageButton
                 android:id="@+id/btnEraser"
                 android:background="@color/white"
@@ -70,6 +73,8 @@
                 android:layout_height="70dp">
 
             </ImageButton>
+
+            <!-- Button to change pen color -->
             <ImageButton
                 android:id="@+id/btnColor"
                 android:background="@color/white"
@@ -80,6 +85,8 @@
                 android:layout_height="70dp">
 
             </ImageButton>
+
+            <!-- Manual save project button -->
             <ImageButton
                 android:id="@+id/btnSave"
                 android:background="@color/white"
@@ -93,7 +100,7 @@
 
         </LinearLayout>
         </LinearLayout>
-
+    <!-- Linear Layout for the animation related buttons above the drawing related buttons -->
     <LinearLayout
         android:id="@+id/animationHolder"
         android:layout_width="match_parent"
@@ -110,7 +117,7 @@
             android:layout_weight="1"
             android:gravity="end">
 
-
+            <!-- Visual indicator text for which frame user is editing -->
             <TextView
                 android:id="@+id/txtframe"
                 android:layout_width="50dp"
@@ -119,6 +126,7 @@
                 android:text="1"
                 android:textColor="#000000"></TextView>
 
+            <!-- Save as animation video button -->
             <ImageButton
                 android:id="@+id/btnVidSave"
                 android:layout_width="0dp"
@@ -130,6 +138,7 @@
 
             </ImageButton>
 
+            <!-- Play through animation button -->
             <ImageButton
                 android:id="@+id/btnVid"
                 android:layout_width="0dp"
@@ -141,6 +150,7 @@
 
             </ImageButton>
 
+            <!-- move to previous frame button -->
             <ImageButton
                 android:id="@+id/btnPrevious"
                 android:layout_width="0dp"
@@ -152,7 +162,7 @@
 
             </ImageButton>
 
-
+            <!-- add new frame button -->
             <ImageButton
                 android:id="@+id/btnAdd"
                 android:layout_width="0dp"
@@ -164,6 +174,7 @@
 
             </ImageButton>
 
+            <!-- move to next frame button -->
             <ImageButton
                 android:id="@+id/btnNext"
                 android:layout_width="0dp"
@@ -177,6 +188,7 @@
 
         </LinearLayout>
 
+        <!-- Linear layout specific to customizable fps -->
         <LinearLayout
             android:layout_width="227dp"
             android:layout_height="wrap_content"
@@ -184,6 +196,7 @@
             android:layout_weight="1"
             android:gravity="end">
 
+            <!-- seek bar that allows user to actually customize the fps -->
             <SeekBar
                 android:id="@+id/frameSize"
                 android:layout_width="0dp"
@@ -196,7 +209,7 @@
 
             </SeekBar>
 
-
+            <!-- visual indicator for which fps the animation is at right now -->
             <TextView
                 android:id="@+id/txtFPS"
                 android:layout_width="wrap_content"
