@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private FileInputStream fileGetter;
 
 
-    String projectDir = "ASDF_CHANGE_ME"; //directory
+    String projectDir = "ASDF_CHANGE_ME"; //project file, change name = make new project!
 
 
     private static String fileName; //file name variable
@@ -93,32 +94,32 @@ public class MainActivity extends AppCompatActivity {
 
         askPermission(); //ask for all permissions used to fetch images and saving stuff
 
-        fileName = path + "/" + "frame_" + currentFrame + ".png"; //set file name for each frame
+        fileName = path + "/" + "frame_" + String.format("%04d", currentFrame) + ".png"; //set file name for each frame
 
         if(!path.exists()){ //check that path exists yk
             System.out.println("piojwfapojwafojpwafjopwfajopwfa did it");
             path.mkdirs();
         }
 
-        try {
-            File[] savedFrames = Objects.requireNonNull(path.listFiles());
-            System.out.println(savedFrames.length);
-            System.out.println(savedFrames[0].getCanonicalPath());
+        try { // fills an array with all pngs in project folder
+            File[] savedFrames = Objects.requireNonNull(path.listFiles(new FilenameFilter() {
+                @Override //filters file name to select only pngs, ignores the video output file
+                public boolean accept(File file, String s) {
+                    return s.toLowerCase().endsWith(".png");
+                }
+            }));
 
             int noOfFrames = savedFrames.length;
-            for (int i = 0; i < noOfFrames; i++) {
+            for (int i = 0; i < noOfFrames; i++) { //creates a fileinputstream for each png to pass to bitmapfactory, adds the generated bitmap to frames array
                 fileGetter = new FileInputStream(savedFrames[i]);
-                System.out.println(frames.get(0));
                 if (frames.get(0) == null) {
                     frames.set(0, BitmapFactory.decodeStream(fileGetter).copy(Bitmap.Config.ARGB_8888, true));
                 } else {
                     frames.add(BitmapFactory.decodeStream(fileGetter).copy(Bitmap.Config.ARGB_8888, true));
                 }
-                System.out.println(savedFrames[i] + "978465");
-                System.out.println(frames.get(i) + "jgkfwar");
                 fileGetter.close();
             }
-            frameView.setBitmap(frames.get(0));
+            frameView.setBitmap(frames.get(0)); //sets view to first frame
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,10 +150,10 @@ public class MainActivity extends AppCompatActivity {
         fpsBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { //fpsBar, method to change the fps of the animation
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                txtFPS.setText(progress + "fps");
-                framesPerSecond = progress;
-                fpsBar.setMax(60);
-                fpsBar.setMin(12);
+                txtFPS.setText(progress + "fps"); //update visual display
+                framesPerSecond = progress; //actually update the int variable keeping track
+                fpsBar.setMax(60); //max fps allowed is 60
+                fpsBar.setMin(12); //min fps allowed is 12
             }
 
             @Override
@@ -176,16 +177,21 @@ public class MainActivity extends AppCompatActivity {
         imgSaveVid.setOnClickListener(new View.OnClickListener() { //method to save animation as a video
             @Override
             public void onClick(View v) {
-
-                    //use ffmpeg to save as a video
-                    FFmpegSession session = FFmpegKit.execute("ffmpeg -framerate "+framesPerSecond+ " -i *.png -vcodec libx264 -pix_fmt yuv420p -crf 20 -c:v mpeg4 out.mp4");
-                    if(ReturnCode.isSuccess(session.getReturnCode())){
+                try {
+                    saveImage(); //make sure stuff is saved as images first
+                    FFmpegSession session = FFmpegKit.execute("-framerate "+framesPerSecond+ " -i " + path + "/frame_%04d.png -vcodec libx264 -pix_fmt yuv420p -crf 20 -vf pad=ceil(iw/2)*2:ceil(ih/2)*2:color=white " + path + "/output.mp4"); //use ffmpeg to call line of command
+                    if(ReturnCode.isSuccess(session.getReturnCode())){ //success!
                         Toast.makeText(MainActivity.this, "Successfully created animation!", Toast.LENGTH_SHORT).show();
-                    } else if(ReturnCode.isCancel(session.getReturnCode())){
+                    } else if(ReturnCode.isCancel(session.getReturnCode())){ //cancelled..?
                         Toast.makeText(MainActivity.this, "Export Cancelled", Toast.LENGTH_SHORT).show();
-                    } else{
+                    } else{ //failed
                         Toast.makeText(MainActivity.this, "Couldn't create animation!", Toast.LENGTH_SHORT).show();
                     }
+                } catch (IOException e) { //couldn't save frames as images
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Couldn't create animation!", Toast.LENGTH_SHORT).show();
+                }
+
 
 
             }
@@ -226,32 +232,25 @@ public class MainActivity extends AppCompatActivity {
 
 
                 try {
-                    if (frames.get(0) == null) {
+                    if (frames.get(0) == null) { //if index 0 of frame array is null, sets it to the first frame
                         frames.set(0, frameView.getSignatureBitmap());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                frameView.clearCanvas();
-                if (currentFrame == frames.size()) {
+                frameView.clearCanvas(); //clearCanvas() generates a new bitmap
+                if (currentFrame == frames.size()) { // if new frame is new last frame then shove it at the end
                     frames.add(frameView.getSignatureBitmap());
-                } else {
+                } else { // else insert new frame in correct location
                     frames.add(currentFrame, frameView.getSignatureBitmap());
                 }
 
                 currentFrame++;
-                previousFrame();
+                previousFrame(); //program breaks without these two lines please ignore
                 nextFrame();
-                txtFrame.setText(String.valueOf(currentFrame));
-                System.out.println("cooooool" + currentFrame);
-                System.out.println(frames.get(currentFrame-1));
-                try {
-                    if (frames.get(0) == null) {
-                        System.out.println("wtf bro 2");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                txtFrame.setText(String.valueOf(currentFrame)); //updates frame counter
+
+
 
 
             }
@@ -281,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        imgSave.setOnClickListener(new View.OnClickListener() { //method to save all work done to work on animation later
+        imgSave.setOnClickListener(new View.OnClickListener() { //method to save all work: main function is simply to call saveFrame() while handling errors
             @Override
             public void onClick(View v) {
                 if(!frameView.isBitmapEmpty()){
@@ -293,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        saveImage();
+                        saveImage(); //save the stuff
                     } catch (IOException e){
                         e.printStackTrace();
                         Toast.makeText(MainActivity.this, "Couldn't save painting!", Toast.LENGTH_SHORT).show();
@@ -309,15 +308,11 @@ public class MainActivity extends AppCompatActivity {
     private void nextFrame() { //method to move to next frame
 
         if (frames.size() > currentFrame) {
-            System.out.println(currentFrame+" 1");
-            frameView.setBitmap(frames.get(currentFrame));
-            System.out.println(currentFrame+" 2");
+
+            frameView.setBitmap(frames.get(currentFrame)); //sets view to next frame in arrayList
+
             currentFrame++;
-            System.out.println(currentFrame+" 3");
-            if (frames.get(currentFrame-1) != null) {
-                System.out.println("wow" + currentFrame);
-                System.out.println(frames.get(currentFrame-1));
-            }
+
 
         }
 
@@ -327,15 +322,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void previousFrame() { //method to move to previous frame
         if (currentFrame != 1) {
-            System.out.println(currentFrame+" 4");
-            frameView.setBitmap(frames.get(currentFrame-2));
-            System.out.println(currentFrame+" 5");
+
+            frameView.setBitmap(frames.get(currentFrame-2)); //sets view to previous frame in arrayList
+
             currentFrame--;
-            System.out.println(currentFrame+" 6");
-            if (frames.get(currentFrame-1) != null) {
-                System.out.println("cool" + currentFrame);
-                System.out.println(frames.get(currentFrame-1));
-            }
+
+
 
         }
 
@@ -343,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveImage() throws IOException { //method to actually save each frame for wanting to use your work for later
         for (Bitmap bitmap:frames) {
-            fileName = path + "/" + "frame_" + (frames.lastIndexOf(bitmap)+1) + ".png"; //save file under a name of frame_(frame number), so if saving frame 1, its saved as frame_1
+            fileName = path + "/" + "frame_" + String.format("%04d", (frames.lastIndexOf(bitmap)+1)) + ".png"; //save file under a name of frame_(frame number), so if saving frame 1, its saved as frame_1
             File file = new File(fileName); //make the file
             //actually save it into files under images into the specific path
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -353,8 +345,9 @@ public class MainActivity extends AppCompatActivity {
             fos.write(bitmapData);
             fos.flush();
             fos.close();
-            Toast.makeText(this, "Painting Saved!", Toast.LENGTH_SHORT).show();
+
         }
+        Toast.makeText(this, "Project Saved!", Toast.LENGTH_SHORT).show();
     }
 
     private void openColorPicker(){ //method for changing the color of the drawing pen
